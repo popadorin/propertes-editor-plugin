@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
@@ -27,7 +29,7 @@ import com.dorin.views.PropertiesView;
 public class PropertiesEditor extends EditorPart {
 	private PropertiesView propertiesView;
 	private IEditorInput input;
-	private IEditorSite site;
+	private Map<String, String> properties = new LinkedHashMap<>();
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -48,7 +50,6 @@ public class PropertiesEditor extends EditorPart {
 		setSite(site);
         setInput(input);
         this.input = input;
-        this.site = site;
 		
 	}
 	
@@ -69,8 +70,11 @@ public class PropertiesEditor extends EditorPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		System.out.println("createPartControl()");
-        
         propertiesView = new PropertiesView(parent, SWT.RESIZE);
+        if (input != null) {
+			String content = getFileContent();
+			properties = getProperties(content);
+		}
 		
 	}
 	
@@ -79,14 +83,29 @@ public class PropertiesEditor extends EditorPart {
 		System.out.println("setFocus()");
 		if (propertiesView != null)
             propertiesView.setFocus();
-		if (input != null && site != null) {
-			getFileContent();
+		
+		if (properties != null) {
+			for (String key : properties.keySet()) {
+				System.out.println("key = " + key + ", value = " + properties.get(key));
+			}
 		}
 	
 	}
 	
-	public String getFileContent() {
-		String content = "";
+	private LinkedHashMap<String, String> getProperties(String content) {
+		LinkedHashMap<String, String> properties = new LinkedHashMap<>();
+		String[] lines = content.split("\\R");
+		for (String line : lines) {
+			String key = line.split("\\=")[0];
+			String value = line.split("\\=")[1];
+			properties.put(key, value);
+		}
+		
+		return properties;
+	}
+
+	private String getFileContent() {
+		String content = null;
         
         IFile ifile = getFileFromEditorInput(input);
         if (ifile != null) {
@@ -98,9 +117,9 @@ public class PropertiesEditor extends EditorPart {
 				StringBuilder result = new StringBuilder();
 				String line;
 				while((line = reader.readLine()) != null) {
-				    result.append(line);
+				    result.append(line + "\n");
 				}
-				System.out.println(result.toString());
+				content = result.toString();
 				
 			} catch (CoreException e) {
 				System.out.println("CoreException on getting the contents of ifile!");

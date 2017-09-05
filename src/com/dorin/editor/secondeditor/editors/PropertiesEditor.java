@@ -50,7 +50,7 @@ public class PropertiesEditor extends EditorPart {
 		setSite(site);
         setInput(input);
         this.input = input;
-		
+  	
 	}
 	
 	@Override
@@ -70,11 +70,14 @@ public class PropertiesEditor extends EditorPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		System.out.println("createPartControl()");
-        propertiesView = new PropertiesView(parent, SWT.RESIZE);
-        if (input != null) {
-			String content = getFileContent();
-			properties = getProperties(content);
-		}
+		
+		String content = getFileContent();
+		properties = getProperties(content);
+		
+        propertiesView = new PropertiesView(parent, SWT.RESIZE, properties);
+        
+        propertiesView.layout();
+        
 		
 	}
 	
@@ -84,15 +87,27 @@ public class PropertiesEditor extends EditorPart {
 		if (propertiesView != null)
             propertiesView.setFocus();
 		
-		if (properties != null) {
-			for (String key : properties.keySet()) {
-				System.out.println("key = " + key + ", value = " + properties.get(key));
-			}
-		}
+		refreshProperties();
+//		if (properties != null) {
+//			for (String key : properties.keySet()) {
+//				System.out.println("key = " + key + ", value = " + properties.get(key));
+//			}
+//		}
 	
 	}
 	
+	private void refreshProperties() {
+		Composite parent = propertiesView.getParent();
+		propertiesView.dispose();
+		createPartControl(parent);
+		propertiesView.getParent().layout();
+	}
+
 	private LinkedHashMap<String, String> getProperties(String content) {
+		if (content == null) {
+			System.out.println("content is null");
+			return null;
+		}
 		LinkedHashMap<String, String> properties = new LinkedHashMap<>();
 		String[] lines = content.split("\\R");
 		for (String line : lines) {

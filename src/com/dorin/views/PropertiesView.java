@@ -1,21 +1,29 @@
 package com.dorin.views;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class PropertiesView extends Composite {
-	private Table table;
+import helpers.TableEditorHelper;
 
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+
+public class PropertiesView extends Composite {
+	private Table table; 
+	private String[] titles;
 	/**
 	 * Create the composite.
 	 * @param parent
 	 * @param style
 	 */
-	public PropertiesView(Composite parent, int style) {
+	public PropertiesView(Composite parent, int style, Map<String, String> properties) {
 		super(parent, style);
 		setLayout(new FillLayout(SWT.HORIZONTAL));
 		
@@ -23,17 +31,40 @@ public class PropertiesView extends Composite {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
-		TableColumn tblclmnKey = new TableColumn(table, SWT.NONE);
-		tblclmnKey.setWidth(100);
-		tblclmnKey.setText("Key");
+		titles = new String[] {"Key", "Value", "Actions"};
+	    for (int i = 0; i < titles.length; i++) {
+	      TableColumn column = new TableColumn(table, SWT.NONE);
+	      column.setText(titles[i]);
+	    }
 		
-		TableColumn tableColumn = new TableColumn(table, SWT.NONE);
-		tableColumn.setWidth(100);
-		tableColumn.setText("Value");
+		if (properties != null) {
+			for (String key : properties.keySet()) {
+				TableItem tableItem = new TableItem(table, SWT.NONE);
+				tableItem.setText(0, key);
+				tableItem.setText(1, properties.get(key));
+			}
+		} else {
+			System.out.println("properties are null");
+		}
 		
-		TableItem tableItem = new TableItem(table, SWT.NONE);
-		tableItem.setText(0, "Key1");
-		tableItem.setText(1, "Value1");
+		for (int i = 0; i < titles.length; i++) {
+	        table.getColumn(i).pack();
+	    }
+		
+		
+		TableEditorHelper editorHelper = new TableEditorHelper();
+		table = editorHelper.makeTableCellsEditable(table);
+		
+		Button btnNewButton = new Button(this, SWT.NONE);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (properties != null) {
+					//imiimimimim
+				}
+			}
+		});
+		btnNewButton.setText("New button");
 
 	}
 
@@ -41,4 +72,5 @@ public class PropertiesView extends Composite {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
+	
 }

@@ -12,12 +12,15 @@ import org.eclipse.swt.widgets.TableItem;
 import helpers.TableEditorHelper;
 
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
 public class PropertiesView extends Composite {
 	private Table table; 
 	private String[] titles;
+	public boolean isSave = false;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -54,6 +57,47 @@ public class PropertiesView extends Composite {
 		
 		TableEditorHelper editorHelper = new TableEditorHelper();
 		table = editorHelper.makeTableCellsEditable(table);
+		
+		table.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				
+				if ((e.stateMask & SWT.CTRL) != 0 && e.keyCode == 115) {
+					System.out.println("save is called!");
+				}
+				
+//				String string = "";
+//				//check click together?
+//				if ((e.stateMask & SWT.ALT) != 0) string += "ALT - keyCode = " + e.keyCode;
+//				if ((e.stateMask & SWT.CTRL) != 0) string += "CTRL - keyCode = " + e.keyCode;
+//				if ((e.stateMask & SWT.SHIFT) != 0) string += "SHIFT - keyCode = " + e.keyCode;
+//				
+//				if(e.keyCode == SWT.BS)
+//				{
+//					string += "BACKSPACE - keyCode = " + e.keyCode;
+//				}
+//				
+//				if(e.keyCode == SWT.ESC)
+//				{
+//					string += "ESCAPE - keyCode = " + e.keyCode;
+//				}
+//				
+//				//check characters 
+//				if(e.keyCode >=97 && e.keyCode <=122)
+//				{
+//					string += " " + e.character + " - keyCode = " + e.keyCode;
+//				}
+//
+//				//check digit
+//				if(e.keyCode >=48 && e.keyCode <=57)
+//				{
+//					string += " " + e.character + " - keyCode = " + e.keyCode;
+//				}
+//				
+//				if(!string.equals(""))
+//					System.out.println (string);
+			}
+		});
+		
 		
 		Button btnNewButton = new Button(this, SWT.NONE);
 		btnNewButton.addSelectionListener(new SelectionAdapter() {

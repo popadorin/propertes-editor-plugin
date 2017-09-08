@@ -14,8 +14,6 @@ public class FileReaderHelper {
 		String content = null;
         
         if (ifile != null) {
-        	System.out.println("ifile is not null hurraaay");
-        	System.out.println(ifile.getName());
         	try {
 				InputStream contents = ifile.getContents();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(contents));

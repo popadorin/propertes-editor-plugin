@@ -9,6 +9,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+//import static org.eclipse.team.ui.ISaveableWorkbenchPart.PROP_DIRTY;
+//import static org.eclipse.compare.CompareEditorInput.DIRTY_STATE;
+import org.eclipse.compare.*;
+
+//import org.eclipse.compare.CompareUI;
+
 import helpers.TableEditorHelper;
 
 import org.eclipse.swt.widgets.Button;
@@ -45,6 +51,7 @@ public class PropertiesView extends Composite {
 				TableItem tableItem = new TableItem(table, SWT.NONE);
 				tableItem.setText(0, key);
 				tableItem.setText(1, properties.get(key));
+				tableItem.setText(2, "-");
 			}
 		} else {
 			System.out.println("properties are null");
@@ -103,9 +110,15 @@ public class PropertiesView extends Composite {
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				// Notify eclipse on Dirty state;
+				System.out.println("DIRTY_STATE: " + CompareEditorInput.DIRTY_STATE);
+//				firePropertyChange(DIRTY_STATE);
 				if (properties != null) {
-					//imiimimimim
+					printProperties(properties);
+				} else {
+					System.out.println("Properties from Composite are null");
 				}
+				
 			}
 		});
 		btnNewButton.setText("New button");
@@ -115,6 +128,12 @@ public class PropertiesView extends Composite {
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+	
+	private void printProperties(Map<String, String> properties) {
+		for (String key : properties.keySet()) {
+			System.out.println("key = " + key + ", value = " + properties.get(key));
+		}
 	}
 	
 }

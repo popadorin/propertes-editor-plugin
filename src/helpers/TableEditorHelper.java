@@ -38,7 +38,7 @@ public class TableEditorHelper {
         while (index < table.getItemCount()) {
         	boolean visible = false;
         	final TableItem item = table.getItem(index);
-        	for (int i = 0; i < table.getColumnCount(); i++) {
+        	for (int i = 0; i < table.getColumnCount() - 1; i++) {
         		Rectangle rect = item.getBounds(i);
         		if (rect.contains(pt)) {
         			handleEditableItem(editor, item, i);

@@ -16,14 +16,14 @@ import com.dorin.views.PropertiesView;
 
 import helpers.FileGetterHelper;
 import helpers.FileReaderHelper;
-import helpers.FileWriterHelper;
+//import helpers.FileWriterHelper;
 
 public class PropertiesEditor extends EditorPart {
 	private PropertiesView propertiesView;
 	private IEditorInput input;
 	private Map<String, String> properties = new LinkedHashMap<>();
 	private FileReaderHelper fileReader = new FileReaderHelper();
-	private FileWriterHelper fileWriter = new FileWriterHelper();
+//	private FileWriterHelper fileWriter = new FileWriterHelper();
 	private FileGetterHelper fileGetter = new FileGetterHelper();
 	private IFile file;
 
@@ -88,7 +88,7 @@ public class PropertiesEditor extends EditorPart {
 		refreshProperties();
 		
 		String s = "jora = vasea\n";
-		
+		this.firePropertyChange(PROP_DIRTY);
 //		fileWriter.writeToFile(file, s);
 		
 //		if (properties != null) {
@@ -114,6 +114,9 @@ public class PropertiesEditor extends EditorPart {
 		LinkedHashMap<String, String> properties = new LinkedHashMap<>();
 		String[] lines = content.split("\\R");
 		for (String line : lines) {
+			if (line.isEmpty()) {
+				continue;
+			}
 			String key = line.split("\\=")[0];
 			String value = line.split("\\=")[1];
 			properties.put(key, value);

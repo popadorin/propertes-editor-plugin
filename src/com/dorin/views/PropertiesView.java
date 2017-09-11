@@ -9,12 +9,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-//import static org.eclipse.team.ui.ISaveableWorkbenchPart.PROP_DIRTY;
-//import static org.eclipse.compare.CompareEditorInput.DIRTY_STATE;
-import org.eclipse.compare.*;
-
-//import org.eclipse.compare.CompareUI;
-
 import helpers.TableEditorHelper;
 
 import org.eclipse.swt.widgets.Button;
@@ -22,19 +16,23 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import java.util.function.*;
 
 public class PropertiesView extends Composite {
 	private Table table; 
 	private String[] titles;
 	public boolean isSave = false;
+	Consumer<Void> consumer;
 	/**
 	 * Create the composite.
+	 * @param propertiesEditor 
 	 * @param parent
 	 * @param style
 	 */
-	public PropertiesView(Composite parent, int style, Map<String, String> properties) {
+	public PropertiesView(Composite parent, int style, Map<String, String> properties, Consumer<Void> consumer) {
 		super(parent, style);
 		setLayout(new FillLayout(SWT.HORIZONTAL));
+		this.consumer = consumer;
 		
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
@@ -111,13 +109,13 @@ public class PropertiesView extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Notify eclipse on Dirty state;
-				System.out.println("DIRTY_STATE: " + CompareEditorInput.DIRTY_STATE);
-//				firePropertyChange(DIRTY_STATE);
-				if (properties != null) {
-					printProperties(properties);
-				} else {
-					System.out.println("Properties from Composite are null");
-				}
+				
+				consumer.accept(null); // calls the setDirty() method from PropertiesEditor
+//				if (properties != null) {
+//					printProperties(properties);
+//				} else {
+//					System.out.println("Properties from Composite are null");
+//				}
 				
 			}
 		});

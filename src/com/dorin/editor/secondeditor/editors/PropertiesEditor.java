@@ -16,16 +16,18 @@ import com.dorin.views.PropertiesView;
 
 import helpers.FileGetterHelper;
 import helpers.FileReaderHelper;
+import helpers.PropertiesGetter;
 //import helpers.FileWriterHelper;
 
 public class PropertiesEditor extends EditorPart {
 	private PropertiesView propertiesView;
 	private IEditorInput input;
+	private IFile file;
 	private Map<String, String> properties = new LinkedHashMap<>();
 	private FileReaderHelper fileReader = new FileReaderHelper();
 //	private FileWriterHelper fileWriter = new FileWriterHelper();
 	private FileGetterHelper fileGetter = new FileGetterHelper();
-	private IFile file;
+	private PropertiesGetter propertiesGetter = new PropertiesGetter();
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -67,14 +69,13 @@ public class PropertiesEditor extends EditorPart {
 	public void createPartControl(Composite parent) {
 		System.out.println("createPartControl()");
 		
-		if (input != null) {
-			file = fileGetter.getFile(input);
-			String content = fileReader.getFileContent(file);
-			
-			properties = getProperties(content);
-		}
+		file = fileGetter.getFile(input);
+		String content = fileReader.getFileContent(file);	
 		
-        propertiesView = new PropertiesView(parent, SWT.RESIZE, properties);
+		properties = propertiesGetter.getProperties(content);
+		
+		
+        propertiesView = new PropertiesView(parent, SWT.RESIZE, properties, (Void) -> setDirty());
         propertiesView.layout();
         
 	}
@@ -88,16 +89,14 @@ public class PropertiesEditor extends EditorPart {
 		refreshProperties();
 		
 		String s = "jora = vasea\n";
-		this.firePropertyChange(PROP_DIRTY);
 //		fileWriter.writeToFile(file, s);
-		
-//		if (properties != null) {
-//			for (String key : properties.keySet()) {
-//				System.out.println("key = " + key + ", value = " + properties.get(key));
-//			}
-//		}
 	
 	}
+	
+	protected void setDirty() {
+//        dirty = value;
+        firePropertyChange(PROP_DIRTY);
+     }
 
 	private void refreshProperties() {
 		Composite parent = propertiesView.getParent();
@@ -106,25 +105,10 @@ public class PropertiesEditor extends EditorPart {
 		propertiesView.getParent().layout();
 	}
 
-	private LinkedHashMap<String, String> getProperties(String content) {
-		if (content == null) {
-			System.out.println("content is null");
-			return null;
+	private void printProperties(Map<String, String> properties) {
+		for (String key : properties.keySet()) {
+			System.out.println("key = " + key + ", value = " + properties.get(key));
 		}
-		LinkedHashMap<String, String> properties = new LinkedHashMap<>();
-		String[] lines = content.split("\\R");
-		for (String line : lines) {
-			if (line.isEmpty()) {
-				continue;
-			}
-			String key = line.split("\\=")[0];
-			String value = line.split("\\=")[1];
-			properties.put(key, value);
-		}
-		
-		return properties;
 	}
-
-
-
+	
 }
